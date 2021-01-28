@@ -8,10 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bbo.mobiledevexam.adapter.ProductCategoryAdapter
+import com.bbo.mobiledevexam.adapter.productlist.ProductListAdapter
 import com.bbo.mobiledevexam.databinding.FragmentProductListBinding
-import kotlinx.coroutines.*
 
 class ProductListFragment : Fragment() {
 
@@ -39,15 +38,32 @@ class ProductListFragment : Fragment() {
 
         binding.apply {
 
-            val productCategoryAdapter = ProductCategoryAdapter(viewModel.getProducts()){ category ->
+            val productCategoryAdapter = ProductCategoryAdapter()
+            val productListAdapter = ProductListAdapter{
+                viewModel.productItemList.value?.forEach {
+                    Log.i("qwe","qweqweqwe ${it}")
+                }
             }
 
             recyclerCategory.apply {
-                layoutManager = LinearLayoutManager(root.context, LinearLayoutManager.HORIZONTAL, false)
                 adapter = productCategoryAdapter
             }
 
+            recyclerSubitem.apply {
+                adapter = productListAdapter
+            }
+
+            viewModel.categories.observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    productCategoryAdapter.submitList(it)
+                }
+            })
+
+            viewModel.productItemList.observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    productListAdapter.submitList(it)
+                }
+            })
         }
     }
-
 }

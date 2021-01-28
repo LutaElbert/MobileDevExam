@@ -3,11 +3,19 @@ package com.bbo.mobiledevexam.util.extension
 import android.content.Context
 import android.graphics.Typeface
 import android.util.Log
+import android.view.View
 import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
-import com.bbo.mobiledevexam.enum.CustomFont
+import com.bbo.mobiledevexam.model.CustomFont
 import java.io.IOException
+
+fun View.makeVisible(){
+    visibility = View.VISIBLE
+}
+
+fun View.makeGone(){
+    visibility = View.GONE
+}
 
 fun Context.getCustomFont(font: CustomFont) : Typeface {
     return Typeface.createFromAsset(assets, font.path)
@@ -27,8 +35,7 @@ fun getJsonDataFromAsset(context: Context, fileName: String): String? {
     try {
         jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
     } catch (ioException: IOException) {
-        //ioException.printStackTrace()
-        Log.e("qweqwe", "qweqw ${ioException.message}")
+        ioException.printStackTrace()
         return null
     }
     return jsonString

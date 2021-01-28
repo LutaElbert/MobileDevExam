@@ -6,9 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.bbo.mobiledevexam.enum.CustomFont
-import com.bbo.mobiledevexam.model.Product
-import com.bbo.mobiledevexam.model.ProductList
+import com.bbo.mobiledevexam.model.*
 import com.bbo.mobiledevexam.util.constant.Constants
 import com.bbo.mobiledevexam.util.extension.getCustomFont
 import com.bbo.mobiledevexam.util.extension.getLocalJson
@@ -19,25 +17,50 @@ class ProductViewModel(var application: Application) : ViewModel() {
 
     private var gson = Gson()
 
-    private var productList: ProductList? = null
-
     private var jsonResult: String? = null
 
     private var viewModelJob = Job()
 
     private var coroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private var _productList = MutableLiveData<ProductList>()
+    private var _productListResponse = MutableLiveData<ProductList>()
+    val productResponse: LiveData<ProductList>?
+        get() = _productListResponse
 
-//    private val productList: LiveData<ProductList>?
-//        get() = _productList
-//
-//    var products = Transformations.map(requireNotNull(productList)) {
-//        it.products?.apply {
-//            sortByDescending { it.price }
-//            add(0, Product(id = CATEGORY_ALL, category = CATEGORY_ALL))
-//        }
-//    }
+    var productItemList = Transformations.map(requireNotNull(productResponse)) { productList ->
+        val list = mutableListOf<ProductItemList>()
+        val products = _productListResponse.value?.products?.toMutableList()
+        products?.forEach {
+            list.add(ProductItemList(
+                id = it.id,
+                name = it.name,
+                category = it.category,
+                price = it.price,
+                color = it.color,
+                quantity = 0
+            ))
+        }
+        list
+    }
+
+    var categories = Transformations.map(requireNotNull(productResponse)) { productList ->
+        //add all to the category
+        val products = _productListResponse.value?.products?.toMutableList()
+        products?.apply {
+            sortByDescending { it.price }
+            add(0, Product(id = CATEGORY_ALL, category = CATEGORY_ALL))
+        }
+
+        //filter and concatenate category list
+        products?.distinctBy { it.category }?.flatMap {
+            val category = mutableListOf<Category>()
+            if (it.id == CATEGORY_ALL)
+                category.add(Category(it.id, it.category, true))
+            else
+                category.add(Category(it.id, it.category.plus("s"), false))
+            category
+        }
+    }
 
     companion object {
         const val TAG = "ProductViewModel"
@@ -45,9 +68,8 @@ class ProductViewModel(var application: Application) : ViewModel() {
     }
 
     init {
-
         jsonResult = application.getLocalJson(Constants.JSON_FILE_NAME)
-        productList = gson.fromJson(jsonResult, ProductList::class.java)
+        _productListResponse.value = gson.fromJson(jsonResult, ProductList::class.java)
 //        coroutineScope.launch {
 //            withContext(Dispatchers.IO) {
 //
@@ -55,10 +77,9 @@ class ProductViewModel(var application: Application) : ViewModel() {
 //        }
     }
 
-    fun getProducts() : MutableList<Product>? {
-        return productList?.products?.apply {
-            sortByDescending { it.price }
-            add(0, Product(id = CATEGORY_ALL, category = CATEGORY_ALL))
+    fun updateProduct(category: Category) {
+        categories.value?.find { it.id == category.id }?.apply {
+            isSelected = category.isSelected
         }
     }
 

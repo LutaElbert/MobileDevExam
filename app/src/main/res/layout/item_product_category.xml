@@ -25,10 +25,10 @@
             style="@style/Recycler_Category_Item.Text"/>
 
         <ImageView
+            android:id="@+id/image_cross"
             android:layout_width="@dimen/category_cross_dimens"
             android:layout_height="@dimen/category_cross_dimens"
             android:src="@drawable/ic_cross"
-            android:layout_marginStart="5dp"
             app:layout_constraintLeft_toRightOf="@+id/text_category"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

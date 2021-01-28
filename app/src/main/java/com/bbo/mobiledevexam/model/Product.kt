@@ -2,11 +2,11 @@ package com.bbo.mobiledevexam.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Product(
-    val id: String? = null,
-    val name: String? = null,
-    val category: String? = null,
-    val price: Float? = null,
+open class Product(
+    open var id: String? = null,
+    open var name: String? = null,
+    open var category: String? = null,
+    open var price: Double? = null,
     @SerializedName("bgColor")
-    val color: String? = null
+    open var color: String? = null
 )

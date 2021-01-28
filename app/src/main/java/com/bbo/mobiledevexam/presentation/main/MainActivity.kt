@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.bbo.mobiledevexam.databinding.ActivityMainBinding
-import com.bbo.mobiledevexam.enum.CustomFont
+import com.bbo.mobiledevexam.model.CustomFont
 import com.bbo.mobiledevexam.util.extension.getCustomFont
 
 class MainActivity : AppCompatActivity() {
