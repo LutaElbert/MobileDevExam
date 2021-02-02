@@ -8,9 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bbo.mobiledevexam.adapter.ProductCategoryAdapter
+import com.bbo.mobiledevexam.adapter.productcategory.ProductCategoryAdapter
 import com.bbo.mobiledevexam.adapter.productlist.ProductListAdapter
 import com.bbo.mobiledevexam.databinding.FragmentProductListBinding
+import com.bbo.mobiledevexam.model.Category
 
 class ProductListFragment : Fragment() {
 
@@ -38,12 +39,14 @@ class ProductListFragment : Fragment() {
 
         binding.apply {
 
-            val productCategoryAdapter = ProductCategoryAdapter()
             val productListAdapter = ProductListAdapter{
-                viewModel.productItemList.value?.forEach {
-                    Log.i("qwe","qweqweqwe ${it}")
-                }
             }
+
+            val productCategoryAdapter = ProductCategoryAdapter{
+                viewModel.displayProductList(it)
+            }
+
+
 
             recyclerCategory.apply {
                 adapter = productCategoryAdapter

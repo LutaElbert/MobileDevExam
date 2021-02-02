@@ -1,43 +1,35 @@
-package com.bbo.mobiledevexam.adapter
+package com.bbo.mobiledevexam.adapter.productcategory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.databinding.ItemProductCategoryBinding
-import com.bbo.mobiledevexam.model.CustomFont
 import com.bbo.mobiledevexam.model.Category
-import com.bbo.mobiledevexam.util.extension.getCustomFont
-import com.bbo.mobiledevexam.util.extension.makeGone
-import com.bbo.mobiledevexam.util.extension.makeVisible
 
-class ProductCategoryAdapter
-    : ListAdapter<Category, ProductCategoryAdapter.ViewHolder>(CategoryDiffCallback()) {
+class ProductCategoryAdapter(val onClick: ((category: Category) -> Unit))
+    : ListAdapter<Category, ProductCategoryAdapter.ViewHolder>(
+    CategoryDiffCallback()
+) {
 
     inner class ViewHolder(val binding: ItemProductCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun init(category: Category) {
             binding.apply {
-                textCategory.text = category.name
-                textCategory.typeface = root.context.getCustomFont(CustomFont.MontserratExtraBold)
+                adapterListener = this@ProductCategoryAdapter
+                categoryItem = category
+                position = layoutPosition
+                executePendingBindings()
 
-                if(category.isSelected) {
-                    itemView.setBackgroundResource(R.drawable.outline_active)
-                    imageCross.makeVisible()
-                }
-                else {
-                    itemView.setBackgroundResource(0)
-                    imageCross.makeGone()
-                }
-
-                itemView.setOnClickListener {
-                    category.isSelected = !category.isSelected
-                    notifyDataSetChanged()
-                }
             }
         }
+    }
+
+    fun onClick(category: Category, position: Int) {
+        category.isSelected = !category.isSelected
+        notifyItemChanged(position)
+        onClick.invoke(category)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,17 +38,9 @@ class ProductCategoryAdapter
         return ViewHolder(binding)
     }
 
-//    override fun getItemCount(): Int {
-//        return categories?.size ?: 0
-//    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.init(getItem(position))
     }
-
-//    private fun clearSelection() {
-//        categories?.forEach { it.isSelected = false }
-//    }
 }
 
 internal class CategoryDiffCallback: DiffUtil.ItemCallback<Category>(){
