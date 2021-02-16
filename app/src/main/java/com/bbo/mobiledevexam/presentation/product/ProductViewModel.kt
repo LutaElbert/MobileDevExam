@@ -1,14 +1,9 @@
 package com.bbo.mobiledevexam.presentation.product
 
 import android.app.Application
-import android.graphics.Typeface
 import androidx.lifecycle.*
 import com.bbo.mobiledevexam.MobileDevExamApplication
 import com.bbo.mobiledevexam.model.*
-import com.bbo.mobiledevexam.util.constant.Constants
-import com.bbo.mobiledevexam.util.extension.getCustomFont
-import com.bbo.mobiledevexam.util.extension.getLocalJson
-import com.google.gson.Gson
 import kotlinx.coroutines.*
 
 class ProductViewModel(var application: Application) : ViewModel() {
@@ -25,36 +20,69 @@ class ProductViewModel(var application: Application) : ViewModel() {
     val productItemList: LiveData<MutableList<ProductItemList>>
         get() = _productItemList
 
-    var categories = Transformations.map(requireNotNull(productResponse)) { productList ->
-        val products = productList.products?.toMutableList()
-        products?.getCategories()
-    }
+    private var _categories = MutableLiveData<MutableList<Category>>()
+    val categories: LiveData<MutableList<Category>>
+        get() = _categories
+
+    private var result: MutableList<ProductItemList>? = mutableListOf()
 
     companion object {
         const val TAG = "ProductViewModel"
-
     }
 
     init {
         val productResponse = (application as MobileDevExamApplication).productResponse
         _productListResponse.value = productResponse.getProductList()
+        _productItemList.value = productResponse.getProductList().products?.toMutableList()?.getProductItemList()
+        _categories.value = productResponse.getProductList().products?.toMutableList()?.getCategories()
     }
 
     fun displayProductList(category: Category) {
         val products = productResponse?.value?.products?.toMutableList()?.getProductItemList()
-        val result = mutableListOf<ProductItemList>()
-        products?.forEach {
-            if(it.category == category.name && category.isSelected){
-                result.add(it)
+
+        if(category.name == "All") {
+            _categories.value?.let {
+                it.toggleHeader(category)
             }
 
-        }
+            _productItemList.value = products
+            result = null
+            return
+        } else {
 
-        _productItemList.value = result
+            _categories.value?.let {
+
+                it.toggleItem(category)
+
+                val noSelection = it.all { !it.isSelected }
+                if (noSelection) {
+                    it.first().isSelected = true
+                    _productItemList.value = products
+                    result = null
+                    return
+                }
+            }
+
+            val filterResult = mutableListOf<ProductItemList>()
+            products?.forEach {
+                if(it.category == category.name){
+                    filterResult.add(it)
+                }
+            }
+
+            result = finalizingResult(category, filterResult)
+
+            _productItemList.value = result
+        }
     }
 
-    fun setScreenTitleTypeFace(): Typeface {
-        return application.applicationContext.getCustomFont(CustomFont.MontserratExtraBold)
+    private fun finalizingResult(category: Category, list: MutableList<ProductItemList>): MutableList<ProductItemList>? {
+        return result?.let {
+            if (category.isSelected)
+                it.plus(list).toMutableList()
+            else
+                it.minus(list).toMutableList()
+        } ?: list
     }
 
     override fun onCleared() {

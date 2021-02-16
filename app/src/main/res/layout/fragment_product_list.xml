@@ -7,6 +7,10 @@
         <variable
             name="productScreenViewModel"
             type="com.bbo.mobiledevexam.presentation.product.ProductViewModel" />
+
+        <variable
+            name="customFont"
+            type="com.bbo.mobiledevexam.model.CustomFont" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         style="@style/Product_Screen_Title"
-        android:typeface="@{productScreenViewModel.setScreenTitleTypeFace()}"/>
+        setCustomFont="@{customFont.MontserratExtraBold}"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_category"

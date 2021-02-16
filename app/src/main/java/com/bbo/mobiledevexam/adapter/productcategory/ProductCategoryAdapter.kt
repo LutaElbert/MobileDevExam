@@ -21,15 +21,13 @@ class ProductCategoryAdapter(val onClick: ((category: Category) -> Unit))
                 categoryItem = category
                 position = layoutPosition
                 executePendingBindings()
-
             }
         }
     }
 
     fun onClick(category: Category, position: Int) {
-        category.isSelected = !category.isSelected
-        notifyItemChanged(position)
         onClick.invoke(category)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

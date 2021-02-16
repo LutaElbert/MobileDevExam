@@ -1,7 +1,6 @@
 package com.bbo.mobiledevexam.presentation.product
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bbo.mobiledevexam.adapter.productcategory.ProductCategoryAdapter
 import com.bbo.mobiledevexam.adapter.productlist.ProductListAdapter
 import com.bbo.mobiledevexam.databinding.FragmentProductListBinding
-import com.bbo.mobiledevexam.model.Category
 
 class ProductListFragment : Fragment() {
 
@@ -45,8 +43,6 @@ class ProductListFragment : Fragment() {
             val productCategoryAdapter = ProductCategoryAdapter{
                 viewModel.displayProductList(it)
             }
-
-
 
             recyclerCategory.apply {
                 adapter = productCategoryAdapter
