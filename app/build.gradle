@@ -10,10 +10,11 @@ android {
 
     defaultConfig {
         applicationId "com.bbo.mobiledevexam"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -25,6 +26,7 @@ android {
     }
 
     buildFeatures {
+        dataBinding true
         viewBinding true
     }
 
@@ -60,10 +62,16 @@ dependencies {
     // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:$version_room"
 
+    //GSON
+    implementation "com.google.code.gson:gson:$version_gson"
 
     // Testing
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+    implementation "com.android.support:recyclerview-v7:$version_recycler"
+    implementation "com.google.code.gson:gson:$version_gson"
 
 }
