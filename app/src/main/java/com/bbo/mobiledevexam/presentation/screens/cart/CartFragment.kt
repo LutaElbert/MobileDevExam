@@ -1,24 +1,22 @@
-package com.bbo.mobiledevexam.presentation.order
+package com.bbo.mobiledevexam.presentation.screens.cart
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bbo.mobiledevexam.R
-import com.bbo.mobiledevexam.databinding.FragmentOrderBinding
+import com.bbo.mobiledevexam.databinding.FragmentCartBinding
 
-class OrderFragment : Fragment() {
+class CartFragment : Fragment() {
 
-    private lateinit var binding: FragmentOrderBinding
+    private lateinit var binding: FragmentCartBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentOrderBinding.inflate(layoutInflater, container, false)
-
+        binding = FragmentCartBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 

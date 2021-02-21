@@ -1,4 +1,4 @@
-package com.bbo.mobiledevexam.presentation.product
+package com.bbo.mobiledevexam.presentation.screens.product
 
 import com.bbo.mobiledevexam.model.Category
 import com.bbo.mobiledevexam.model.Product

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bbo.mobiledevexam.databinding.ItemProductBinding
 import com.bbo.mobiledevexam.model.ProductItemList
 
-class ProductListAdapter(val onClick: (() -> Unit)): ListAdapter<ProductItemList, ProductListAdapter.ViewHolder>(ProductDiffCallback) {
+class ProductListAdapter(val listener: Listener): ListAdapter<ProductItemList, ProductListAdapter.ViewHolder>(ProductDiffCallback) {
 
     companion object ProductDiffCallback: DiffUtil.ItemCallback<ProductItemList>() {
         override fun areItemsTheSame(oldItem: ProductItemList, newItem: ProductItemList): Boolean {
@@ -22,20 +22,11 @@ class ProductListAdapter(val onClick: (() -> Unit)): ListAdapter<ProductItemList
 
     inner class ViewHolder(val binding: ItemProductBinding): RecyclerView.ViewHolder(binding.root) {
 
-        fun init(product: ProductItemList, onClick: () -> Unit) {
+        fun init(product: ProductItemList, listener: Listener) {
             binding.apply {
                 this.product = product
+                this.listener = listener
                 executePendingBindings()
-
-                imageMinus.setOnClickListener {
-                    product.decrementeQuantity()
-                    notifyDataSetChanged()
-                }
-
-                imageAdd.setOnClickListener {
-                    product.incrementQuantity()
-                    notifyDataSetChanged()
-                }
             }
         }
     }
@@ -47,6 +38,10 @@ class ProductListAdapter(val onClick: (() -> Unit)): ListAdapter<ProductItemList
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.init(getItem(position), onClick)
+        holder.init(getItem(position), listener)
+    }
+
+    class Listener(val onClick: (id: String?) -> Unit) {
+        fun onClick(product: ProductItemList) = onClick(product.id)
     }
 }

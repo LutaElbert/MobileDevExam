@@ -1,4 +1,4 @@
-package com.bbo.mobiledevexam.presentation.main
+package com.bbo.mobiledevexam.presentation.screens.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

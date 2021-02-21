@@ -6,7 +6,7 @@
     <data>
         <variable
             name="productScreenViewModel"
-            type="com.bbo.mobiledevexam.presentation.product.ProductViewModel" />
+            type="com.bbo.mobiledevexam.presentation.screens.product.ProductViewModel" />
 
         <variable
             name="customFont"
@@ -16,7 +16,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.product.ProductListFragment">
+        tools:context=".presentation.screens.product.ProductListFragment">
 
     <TextView
         android:id="@+id/text_title"

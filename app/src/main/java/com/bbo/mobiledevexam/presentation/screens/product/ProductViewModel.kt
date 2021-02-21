@@ -1,16 +1,22 @@
-package com.bbo.mobiledevexam.presentation.product
+package com.bbo.mobiledevexam.presentation.screens.product
 
 import android.app.Application
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
+import androidx.databinding.Observable
 import androidx.lifecycle.*
 import com.bbo.mobiledevexam.MobileDevExamApplication
+import com.bbo.mobiledevexam.R
+import com.bbo.mobiledevexam.db.ProductRepository
+import com.bbo.mobiledevexam.db.ProductTable
 import com.bbo.mobiledevexam.model.*
+import com.bbo.mobiledevexam.util.extension.getCustomFont
 import kotlinx.coroutines.*
 
-class ProductViewModel(var application: Application) : ViewModel() {
+class ProductViewModel(var application: Application, private val repository: ProductRepository) : ViewModel(), Observable {
 
-    private var viewModelJob = Job()
-
-    private var coroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    val products = repository.products
 
     private var _productListResponse = MutableLiveData<ProductList>()
     val productResponse: LiveData<ProductList>?
@@ -85,9 +91,50 @@ class ProductViewModel(var application: Application) : ViewModel() {
         } ?: list
     }
 
+    fun insert(id: String?, onSuccess: ((product: ProductItemList) -> Unit)? = null) {
+        val product = getProductById(id)
+        product?.let {
+            insert(
+                ProductTable(
+                    productId = requireNotNull(it.id),
+                    productName = it.name,
+                    productCategory = it.category,
+                    productColor = it.color,
+                    productPrice = it.price
+                ))
+            {
+                onSuccess?.invoke(it)
+            }
+        }
+    }
+
+    private fun insert(productTable: ProductTable, onSuccess: (() -> Unit)? = null) {
+        viewModelScope.launch {
+            val job = launch {
+                repository.insert(productTable)
+            }
+
+            job.join()
+            onSuccess?.invoke()
+        }
+    }
+
+    fun getProductById(id: String?) : ProductItemList? = _productItemList.value?.find { it.id == id }
+
+    fun deleteAll() = viewModelScope.launch {
+        repository.deleteAll()
+    }
+
     override fun onCleared() {
         super.onCleared()
-        viewModelJob.cancel()
+    }
+
+    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+
+    }
+
+    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+
     }
 
 }
