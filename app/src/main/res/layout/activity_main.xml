@@ -60,6 +60,7 @@
                     android:layout_width="@dimen/dimens_26dp"
                     android:layout_height="@dimen/dimens_26dp"
                     android:src="@drawable/cart_badge"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/dimens_2dp"
                     android:layout_marginEnd="@dimen/dimens_5dp"
                     app:layout_constraintTop_toTopOf="parent"

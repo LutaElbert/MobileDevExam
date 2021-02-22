@@ -2,7 +2,6 @@ package com.bbo.mobiledevexam.presentation.screens.product
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,22 +9,19 @@ import android.view.ViewGroup
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.adapter.productcategory.ProductCategoryAdapter
 import com.bbo.mobiledevexam.adapter.productlist.ProductListAdapter
-import com.bbo.mobiledevexam.databinding.ActivityMainBinding
 import com.bbo.mobiledevexam.databinding.FragmentProductListBinding
 import com.bbo.mobiledevexam.databinding.SnackbarItemAddedBinding
 import com.bbo.mobiledevexam.db.ProductDatabase
 import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.presentation.screens.main.MainActivity
+import com.bbo.mobiledevexam.util.extension.makeGone
+import com.bbo.mobiledevexam.util.extension.makeVisible
 import com.bbo.mobiledevexam.util.extension.messageFormat
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
-import kotlinx.android.synthetic.main.activity_main.view.text_badge
-import kotlinx.coroutines.launch
 
 class ProductListFragment : Fragment() {
 
@@ -52,7 +48,14 @@ class ProductListFragment : Fragment() {
 
         mainToolbar = activity as MainActivity
         viewModel.products.observe(viewLifecycleOwner, Observer { list ->
-            mainToolbar.text_badge.text = list.size.toString()
+
+            mainToolbar.image_badge.apply {
+                if (list.isNotEmpty()) makeVisible() else makeGone()
+            }
+
+            mainToolbar.text_badge.apply {
+                text = list.size.toString()
+            }
         })
 
         return binding.root
