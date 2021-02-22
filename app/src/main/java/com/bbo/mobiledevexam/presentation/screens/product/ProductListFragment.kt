@@ -16,14 +16,22 @@ import com.bbo.mobiledevexam.databinding.FragmentProductListBinding
 import com.bbo.mobiledevexam.databinding.SnackbarItemAddedBinding
 import com.bbo.mobiledevexam.db.ProductDatabase
 import com.bbo.mobiledevexam.db.ProductRepository
+import com.bbo.mobiledevexam.presentation.screens.main.MainActivity
+import com.bbo.mobiledevexam.util.extension.makeGone
+import com.bbo.mobiledevexam.util.extension.makeVisible
 import com.bbo.mobiledevexam.util.extension.messageFormat
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
 
 class ProductListFragment : Fragment() {
 
     private lateinit var binding: FragmentProductListBinding
 
+    private lateinit var viewModelFactory: ProductViewModelFactory
+
     private lateinit var viewModel: ProductViewModel
+
+    private lateinit var mainToolbar: MainActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,14 +39,24 @@ class ProductListFragment : Fragment() {
     ): View? {
         binding =  FragmentProductListBinding.inflate(layoutInflater, container, false)
 
-        val dao = ProductDatabase.getInstance(requireNotNull(context)).productDAO
-        val repository = ProductRepository(dao)
-        val factory = ProductViewModelFactory(requireNotNull(this.activity).application, repository)
+        viewModelFactory = ProductViewModelFactory(requireNotNull(this.activity).application, getDatabaseInstance())
 
-        viewModel = ViewModelProvider(this, factory).get(ProductViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
         binding.productScreenViewModel = viewModel
         binding.lifecycleOwner = this
+
+        mainToolbar = activity as MainActivity
+        viewModel.products.observe(viewLifecycleOwner, Observer { list ->
+
+            mainToolbar.image_badge.apply {
+                if (list.isNotEmpty()) makeVisible() else makeGone()
+            }
+
+            mainToolbar.text_badge.apply {
+                text = list.size.toString()
+            }
+        })
 
         return binding.root
     }
@@ -76,6 +94,11 @@ class ProductListFragment : Fragment() {
                 }
             })
         }
+    }
+
+    private fun getDatabaseInstance() : ProductRepository {
+        val dao = ProductDatabase.getInstance(requireContext()).productDAO
+        return ProductRepository(dao)
     }
 
     private fun insertToCart(it: String?) {
