@@ -44,7 +44,7 @@ class CartAdapter( var listener: Listener): ListAdapter<CartTable, CartAdapter.V
         holder.init(getItem(position), listener)
     }
 
-    class Listener(val onClick: (id: String?) -> Unit) {
-        fun onClick(product: ProductItemList) = onClick(product.id)
+    class Listener(val onClickListener: (id: String) -> Unit) {
+        fun onClick(product: CartTable) = onClickListener(product.productId)
     }
 }

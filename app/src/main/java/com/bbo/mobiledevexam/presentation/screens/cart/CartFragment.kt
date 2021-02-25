@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListAdapter
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
@@ -17,6 +19,10 @@ import com.bbo.mobiledevexam.databinding.ItemCartBinding
 import com.bbo.mobiledevexam.db.ProductDatabase
 import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.model.ProductItemList
+import com.bbo.mobiledevexam.presentation.screens.main.MainActivity
+import com.bbo.mobiledevexam.util.extension.makeGone
+import com.bbo.mobiledevexam.util.extension.makeVisible
+import kotlinx.android.synthetic.main.activity_main.*
 
 class CartFragment : Fragment() {
 
@@ -26,33 +32,45 @@ class CartFragment : Fragment() {
 
     private lateinit var adapter: CartAdapter
 
+    private lateinit var mainActivity: MainActivity
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        viewModel = ViewModelProvider(this, CartViewModelFactory(getDatabaseInstance())).get(CartViewModel::class.java)
+        mainActivity = activity as MainActivity
+
+        viewModel = ViewModelProvider(this, CartViewModelFactory(mainActivity.repository))
+            .get(CartViewModel::class.java)
 
         binding = FragmentCartBinding.inflate(layoutInflater, container, false)
 
-        val adapter = CartAdapter(CartAdapter.Listener {
-
-        })
-
-        viewModel.cart.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                adapter.submitList(it)
-            }
+        adapter = CartAdapter(CartAdapter.Listener {id ->
+            viewModel.deleteItem(id)
         })
 
         binding.recycler.adapter = adapter
 
+        setupObservers()
+
         return binding.root
     }
 
-    private fun getDatabaseInstance() : ProductRepository {
-        val dao = ProductDatabase.getInstance(requireNotNull(context)).productDAO
-        return ProductRepository(dao)
+    private fun setupObservers() {
+        viewModel.cart.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                mainActivity.image_badge.apply {
+                    if (it.isNotEmpty()) makeVisible() else makeGone()
+                }
+
+                mainActivity.text_badge.apply {
+                    text = it.size.toString()
+                }
+
+                adapter.submitList(it)
+            }
+        })
     }
 
 }

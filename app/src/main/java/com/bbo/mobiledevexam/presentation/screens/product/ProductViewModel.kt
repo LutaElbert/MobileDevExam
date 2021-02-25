@@ -14,7 +14,7 @@ import kotlinx.coroutines.*
 
 class ProductViewModel(var application: Application, private val repository: ProductRepository) : ViewModel(), Observable {
 
-    val products = repository.products
+    val cart = repository.products
 
     private var _productListResponse = MutableLiveData<ProductList>()
     val productResponse: LiveData<ProductList>?

@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bbo.mobiledevexam.R
@@ -22,6 +24,7 @@ import com.bbo.mobiledevexam.util.extension.makeVisible
 import com.bbo.mobiledevexam.util.extension.messageFormat
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 class ProductListFragment : Fragment() {
 
@@ -31,7 +34,7 @@ class ProductListFragment : Fragment() {
 
     private lateinit var viewModel: ProductViewModel
 
-    private lateinit var mainToolbar: MainActivity
+    private lateinit var mainActivity: MainActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,26 +42,32 @@ class ProductListFragment : Fragment() {
     ): View? {
         binding =  FragmentProductListBinding.inflate(layoutInflater, container, false)
 
-        viewModelFactory = ProductViewModelFactory(requireNotNull(this.activity).application, getDatabaseInstance())
+        mainActivity = activity as MainActivity
+
+        viewModelFactory = ProductViewModelFactory(requireNotNull(activity).application, mainActivity.repository)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
         binding.productScreenViewModel = viewModel
         binding.lifecycleOwner = this
 
-        mainToolbar = activity as MainActivity
-        viewModel.products.observe(viewLifecycleOwner, Observer { list ->
+        setupObservers()
 
-            mainToolbar.image_badge.apply {
+        return binding.root
+    }
+
+    private fun setupObservers() {
+        viewModel.cart.observe(viewLifecycleOwner, Observer { list ->
+
+            mainActivity.image_badge.apply {
                 if (list.isNotEmpty()) makeVisible() else makeGone()
             }
 
-            mainToolbar.text_badge.apply {
+            mainActivity.text_badge.apply {
                 text = list.size.toString()
             }
-        })
 
-        return binding.root
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,10 +105,10 @@ class ProductListFragment : Fragment() {
         }
     }
 
-    private fun getDatabaseInstance() : ProductRepository {
-        val dao = ProductDatabase.getInstance(requireContext()).productDAO
-        return ProductRepository(dao)
-    }
+//    private fun getDatabaseInstance() : ProductRepository {
+//        val dao = ProductDatabase.getInstance(requireContext()).productDAO
+//        return ProductRepository(dao)
+//    }
 
     private fun insertToCart(it: String?) {
         viewModel.insert(it) {
@@ -132,6 +141,5 @@ class ProductListFragment : Fragment() {
 
         snackbar.show()
     }
-
 
 }
