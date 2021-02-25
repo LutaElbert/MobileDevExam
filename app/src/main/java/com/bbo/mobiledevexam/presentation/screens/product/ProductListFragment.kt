@@ -6,12 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.adapter.productcategory.ProductCategoryAdapter
 import com.bbo.mobiledevexam.adapter.productlist.ProductListAdapter
+import com.bbo.mobiledevexam.adapter.productlist.setBackgroundTint
 import com.bbo.mobiledevexam.databinding.FragmentProductListBinding
 import com.bbo.mobiledevexam.databinding.SnackbarItemAddedBinding
 import com.bbo.mobiledevexam.db.ProductDatabase
@@ -107,7 +107,7 @@ class ProductListFragment : Fragment() {
         }
     }
 
-    private fun displayAddedItemMessage(msg: String?, itemColor: String) {
+    private fun displayAddedItemMessage(msg: String?, hexColor: String) {
         val snackbarPadding = resources.getDimension(R.dimen.dimens_16dp).toInt()
 
         val snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
@@ -115,14 +115,13 @@ class ProductListFragment : Fragment() {
 
         val snackbarItemAddedBinding = SnackbarItemAddedBinding.inflate(layoutInflater)
         snackbarItemAddedBinding.apply {
-            val drawable = containerBackground.background
 
             textItemAdded.text = context?.messageFormat(msg)
             imageClose.setOnClickListener {
                 snackbar.dismiss()
             }
 
-            DrawableCompat.setTint(drawable, Color.parseColor(itemColor))
+            containerBackground.setBackgroundTint(hexColor)
         }
 
         val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout
@@ -133,5 +132,6 @@ class ProductListFragment : Fragment() {
 
         snackbar.show()
     }
+
 
 }
