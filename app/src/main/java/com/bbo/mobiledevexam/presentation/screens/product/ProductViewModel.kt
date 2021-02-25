@@ -1,15 +1,13 @@
 package com.bbo.mobiledevexam.presentation.screens.product
 
 import android.app.Application
-import android.text.Spannable
-import android.text.SpannableString
 import android.text.style.StyleSpan
 import androidx.databinding.Observable
 import androidx.lifecycle.*
 import com.bbo.mobiledevexam.MobileDevExamApplication
 import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.db.ProductRepository
-import com.bbo.mobiledevexam.db.ProductTable
+import com.bbo.mobiledevexam.db.CartTable
 import com.bbo.mobiledevexam.model.*
 import com.bbo.mobiledevexam.util.extension.getCustomFont
 import kotlinx.coroutines.*
@@ -95,7 +93,7 @@ class ProductViewModel(var application: Application, private val repository: Pro
         val product = getProductById(id)
         product?.let {
             insert(
-                ProductTable(
+                CartTable(
                     productId = requireNotNull(it.id),
                     productName = it.name,
                     productCategory = it.category,
@@ -108,10 +106,10 @@ class ProductViewModel(var application: Application, private val repository: Pro
         }
     }
 
-    private fun insert(productTable: ProductTable, onSuccess: (() -> Unit)? = null) {
+    private fun insert(cartTable: CartTable, onSuccess: (() -> Unit)? = null) {
         viewModelScope.launch {
             val job = launch {
-                repository.insert(productTable)
+                repository.insert(cartTable)
             }
 
             job.join()

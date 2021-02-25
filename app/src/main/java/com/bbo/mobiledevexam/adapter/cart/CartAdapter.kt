@@ -6,17 +6,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bbo.mobiledevexam.databinding.ItemCartBinding
-import com.bbo.mobiledevexam.db.ProductTable
+import com.bbo.mobiledevexam.db.CartTable
 import com.bbo.mobiledevexam.model.ProductItemList
 
-class CartAdapter( var listener: Listener): ListAdapter<ProductTable, CartAdapter.ViewHolder>(ProductDiffCallback) {
+class CartAdapter( var listener: Listener): ListAdapter<CartTable, CartAdapter.ViewHolder>(ProductDiffCallback) {
 
-    companion object ProductDiffCallback: DiffUtil.ItemCallback<ProductTable>() {
-        override fun areItemsTheSame(oldItem: ProductTable, newItem: ProductTable): Boolean {
+    companion object ProductDiffCallback: DiffUtil.ItemCallback<CartTable>() {
+        override fun areItemsTheSame(oldItem: CartTable, newItem: CartTable): Boolean {
             return oldItem.productId == newItem.productId
         }
 
-        override fun areContentsTheSame(oldItem: ProductTable, newItem: ProductTable): Boolean {
+        override fun areContentsTheSame(oldItem: CartTable, newItem: CartTable): Boolean {
             return oldItem == newItem
         }
 
@@ -24,9 +24,9 @@ class CartAdapter( var listener: Listener): ListAdapter<ProductTable, CartAdapte
 
     inner class ViewHolder(val binding: ItemCartBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun init(product: ProductTable, listener: Listener) {
+        fun init(cart: CartTable, listener: Listener) {
             binding.apply {
-                this.product = product
+                this.product = cart
                 this.listener = listener
                 executePendingBindings()
             }
