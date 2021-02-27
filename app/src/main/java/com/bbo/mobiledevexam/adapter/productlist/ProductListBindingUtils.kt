@@ -48,5 +48,7 @@ fun ImageView.setImageResourceByName(filename: String?) {
 
 @BindingAdapter("app:setBackgroundTint")
 fun View.setBackgroundTint(hexColor: String?) {
-    DrawableCompat.setTint(background, Color.parseColor(hexColor))
+    hexColor?.let {
+        DrawableCompat.setTint(background, Color.parseColor(hexColor))
+    }
 }

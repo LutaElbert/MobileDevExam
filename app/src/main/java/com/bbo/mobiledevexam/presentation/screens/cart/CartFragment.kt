@@ -68,7 +68,7 @@ class CartFragment : Fragment() {
                     text = it.size.toString()
                 }
 
-                adapter.submitList(it)
+                adapter.cartList = it.toMutableList()
             }
         })
     }

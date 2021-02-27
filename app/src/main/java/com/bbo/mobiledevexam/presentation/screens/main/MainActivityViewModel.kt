@@ -15,6 +15,10 @@ class MainActivityViewModel(private val repository: ProductRepository): ViewMode
         callback?.onClickCart()
     }
 
+    fun onDestroy() {
+        callback = null
+    }
+
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
 
     }

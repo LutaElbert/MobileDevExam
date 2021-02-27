@@ -38,15 +38,15 @@ class MainActivity : AppCompatActivity(), MainActivityViewModel.Callback {
 
     }
 
-//    fun getDatabaseInstance() : ProductRepository {
-//        val dao = ProductDatabase.getInstance(requireNotNull(this)).productDAO
-//        return ProductRepository(dao)
-//    }
-
     override fun onClickCart() {
         findNavController(R.id.nav_host_fragment).apply {
             navigateUp()
             navigate(R.id.cartFragment)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onDestroy()
     }
 }

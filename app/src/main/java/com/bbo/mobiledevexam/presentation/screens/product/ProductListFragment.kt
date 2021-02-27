@@ -56,20 +56,6 @@ class ProductListFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupObservers() {
-        viewModel.cart.observe(viewLifecycleOwner, Observer { list ->
-
-            mainActivity.image_badge.apply {
-                if (list.isNotEmpty()) makeVisible() else makeGone()
-            }
-
-            mainActivity.text_badge.apply {
-                text = list.size.toString()
-            }
-
-        })
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -105,10 +91,19 @@ class ProductListFragment : Fragment() {
         }
     }
 
-//    private fun getDatabaseInstance() : ProductRepository {
-//        val dao = ProductDatabase.getInstance(requireContext()).productDAO
-//        return ProductRepository(dao)
-//    }
+    private fun setupObservers() {
+        viewModel.cart.observe(viewLifecycleOwner, Observer { list ->
+
+            mainActivity.image_badge.apply {
+                if (list.isNotEmpty()) makeVisible() else makeGone()
+            }
+
+            mainActivity.text_badge.apply {
+                text = list.size.toString()
+            }
+
+        })
+    }
 
     private fun insertToCart(it: String?) {
         viewModel.insert(it) {
