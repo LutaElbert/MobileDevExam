@@ -6,6 +6,7 @@
     <string name="text_screen_title">Products</string>
     <string name="text_screen_cart_title">Cart</string>
     <string name="text_screen_checkout_title">Checkout</string>
+    <string name="text_screen_confirmation_title">Order Confirmation</string>
     <string name="text_category">Category</string>
     <string name="text_product">Product</string>
 
@@ -15,4 +16,6 @@
     <string name="text_tac">I agree to the terms and conditions</string>
     <string name="hint_name">e.g Jane Doe</string>
     <string name="hint_email">e.g jane@company.co</string>
+    <string name="text_return_to_product">Return to Products</string>
+    <string name="text_order_complete_message">Your order has been processed</string>
 </resources>

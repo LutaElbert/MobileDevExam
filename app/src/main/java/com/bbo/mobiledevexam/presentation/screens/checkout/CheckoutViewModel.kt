@@ -1,6 +1,5 @@
 package com.bbo.mobiledevexam.presentation.screens.checkout
 
-import android.util.Log
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.lifecycle.MutableLiveData
@@ -28,7 +27,11 @@ class CheckoutViewModel(val repository: ProductRepository) : ViewModel(), Observ
            return
         }
 
+        navigateToOrderConfirmation()
+    }
 
+    private fun navigateToOrderConfirmation() {
+        callback?.onPay()
     }
 
     private fun invalidInputs() : Boolean = !validInputs()
@@ -48,8 +51,14 @@ class CheckoutViewModel(val repository: ProductRepository) : ViewModel(), Observ
 
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        callback = null
+    }
+
     interface Callback {
         fun isAgreedToTermAndConditions() : Boolean
+        fun onPay()
     }
 
 }
