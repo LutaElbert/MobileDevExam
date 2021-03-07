@@ -24,6 +24,7 @@
         android:layout_marginTop="@dimen/dimens_16dp"
         android:layout_marginStart="@dimen/dimens_25dp"
         android:layout_marginEnd="@dimen/dimens_25dp"
+        android:layout_marginBottom="@dimen/dimens_25dp"
         android:orientation="horizontal">
 
         <TextView
@@ -43,6 +44,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/buy_now_btn"
             android:layout_gravity="end"
+            android:onClick="@{() -> listener.onBuy()}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

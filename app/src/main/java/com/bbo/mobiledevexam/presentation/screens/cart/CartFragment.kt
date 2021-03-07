@@ -1,30 +1,23 @@
 package com.bbo.mobiledevexam.presentation.screens.cart
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListAdapter
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.findNavController
+import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.adapter.cart.CartAdapter
-import com.bbo.mobiledevexam.adapter.productlist.ProductListAdapter
 import com.bbo.mobiledevexam.databinding.FragmentCartBinding
-import com.bbo.mobiledevexam.databinding.ItemCartBinding
-import com.bbo.mobiledevexam.db.ProductDatabase
-import com.bbo.mobiledevexam.db.ProductRepository
-import com.bbo.mobiledevexam.model.ProductItemList
+import com.bbo.mobiledevexam.db.CartTable
 import com.bbo.mobiledevexam.presentation.screens.main.MainActivity
 import com.bbo.mobiledevexam.util.extension.makeGone
 import com.bbo.mobiledevexam.util.extension.makeVisible
 import kotlinx.android.synthetic.main.activity_main.*
 
-class CartFragment : Fragment() {
+class CartFragment : Fragment(), CartAdapter.Listener {
 
     private lateinit var binding: FragmentCartBinding
 
@@ -46,9 +39,9 @@ class CartFragment : Fragment() {
 
         binding = FragmentCartBinding.inflate(layoutInflater, container, false)
 
-        adapter = CartAdapter(CartAdapter.Listener {id ->
-            viewModel.deleteItem(id)
-        })
+        adapter = CartAdapter()
+
+        adapter.listener = this
 
         binding.recycler.adapter = adapter
 
@@ -71,6 +64,19 @@ class CartFragment : Fragment() {
                 adapter.cartList = it.toMutableList()
             }
         })
+    }
+
+    override fun onDelete(product: CartTable) {
+        viewModel.deleteItem(product.productId)
+    }
+
+    override fun onBuy() {
+        activity?.let {
+            it.findNavController(R.id.nav_host_fragment).apply {
+                navigateUp()
+                navigate(R.id.checkoutFragment)
+            }
+        }
     }
 
 }

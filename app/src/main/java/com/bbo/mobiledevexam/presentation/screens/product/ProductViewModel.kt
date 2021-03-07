@@ -1,16 +1,18 @@
 package com.bbo.mobiledevexam.presentation.screens.product
 
 import android.app.Application
-import android.text.style.StyleSpan
 import androidx.databinding.Observable
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bbo.mobiledevexam.MobileDevExamApplication
-import com.bbo.mobiledevexam.R
-import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.db.CartTable
-import com.bbo.mobiledevexam.model.*
-import com.bbo.mobiledevexam.util.extension.getCustomFont
-import kotlinx.coroutines.*
+import com.bbo.mobiledevexam.db.ProductRepository
+import com.bbo.mobiledevexam.model.Category
+import com.bbo.mobiledevexam.model.ProductItemList
+import com.bbo.mobiledevexam.model.ProductList
+import kotlinx.coroutines.launch
 
 class ProductViewModel(var application: Application, private val repository: ProductRepository) : ViewModel(), Observable {
 

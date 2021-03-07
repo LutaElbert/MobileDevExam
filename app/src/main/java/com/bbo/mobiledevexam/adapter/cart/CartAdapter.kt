@@ -9,7 +9,9 @@ import com.bbo.mobiledevexam.databinding.ItemCartBinding
 import com.bbo.mobiledevexam.databinding.ItemCartFooterBinding
 import com.bbo.mobiledevexam.db.CartTable
 
-class CartAdapter(var listener: Listener): ListAdapter<CartTable, RecyclerView.ViewHolder>(ProductDiffCallback) {
+class CartAdapter : ListAdapter<CartTable, RecyclerView.ViewHolder>(ProductDiffCallback) {
+
+    var listener: Listener? = null
 
     private var total: Double? = 0.0
 
@@ -25,7 +27,7 @@ class CartAdapter(var listener: Listener): ListAdapter<CartTable, RecyclerView.V
 
     inner class ViewHolderList(private val binding: ItemCartBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun init(cart: CartTable, listener: Listener) {
+        fun init(cart: CartTable, listener: Listener?) {
             binding.apply {
                 this.product = cart
                 this.listener = listener
@@ -37,9 +39,10 @@ class CartAdapter(var listener: Listener): ListAdapter<CartTable, RecyclerView.V
 
     inner class ViewHolderFooter(private val binding: ItemCartFooterBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun init(listener: Listener) {
+        fun init(listener: Listener?) {
             binding.apply {
                 sum = total
+                this.listener = listener
             }
         }
 
@@ -83,8 +86,9 @@ class CartAdapter(var listener: Listener): ListAdapter<CartTable, RecyclerView.V
         }
     }
 
-    class Listener(val listener: (id: String) -> Unit) {
-        fun onClick(product: CartTable) = listener(product.productId)
+    interface Listener {
+        fun onDelete(product: CartTable)
+        fun onBuy()
     }
 
     companion object {

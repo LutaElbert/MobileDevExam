@@ -79,7 +79,7 @@
             android:layout_height="30dp"
             android:src="@drawable/snackbar_button"
             android:layout_gravity="end"
-            android:onClick="@{() -> listener.onClick(product)}"
+            android:onClick="@{() -> listener.onDelete(product)}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
