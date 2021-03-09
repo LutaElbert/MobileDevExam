@@ -4,8 +4,15 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="toolbar_title">Shop</string>
     <string name="text_screen_title">Products</string>
+    <string name="text_screen_cart_title">Cart</string>
+    <string name="text_screen_checkout_title">Checkout</string>
     <string name="text_category">Category</string>
     <string name="text_product">Product</string>
 
     <string name="text_item_added_suffix">has been added to your cart.</string>
+    <string name="text_name">Your name</string>
+    <string name="text_email">Your email</string>
+    <string name="text_tac">I agree to the terms and conditions</string>
+    <string name="hint_name">e.g Jane Doe</string>
+    <string name="hint_email">e.g jane@company.co</string>
 </resources>

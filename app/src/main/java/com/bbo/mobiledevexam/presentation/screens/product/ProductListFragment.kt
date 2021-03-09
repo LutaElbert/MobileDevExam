@@ -6,12 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.drawable.DrawableCompat
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.adapter.productcategory.ProductCategoryAdapter
 import com.bbo.mobiledevexam.adapter.productlist.ProductListAdapter
+import com.bbo.mobiledevexam.adapter.productlist.setBackgroundTint
 import com.bbo.mobiledevexam.databinding.FragmentProductListBinding
 import com.bbo.mobiledevexam.databinding.SnackbarItemAddedBinding
 import com.bbo.mobiledevexam.db.ProductDatabase
@@ -22,6 +24,7 @@ import com.bbo.mobiledevexam.util.extension.makeVisible
 import com.bbo.mobiledevexam.util.extension.messageFormat
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 class ProductListFragment : Fragment() {
 
@@ -31,7 +34,7 @@ class ProductListFragment : Fragment() {
 
     private lateinit var viewModel: ProductViewModel
 
-    private lateinit var mainToolbar: MainActivity
+    private lateinit var mainActivity: MainActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,24 +42,16 @@ class ProductListFragment : Fragment() {
     ): View? {
         binding =  FragmentProductListBinding.inflate(layoutInflater, container, false)
 
-        viewModelFactory = ProductViewModelFactory(requireNotNull(this.activity).application, getDatabaseInstance())
+        mainActivity = activity as MainActivity
+
+        viewModelFactory = ProductViewModelFactory(requireNotNull(activity).application, mainActivity.repository)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
         binding.productScreenViewModel = viewModel
         binding.lifecycleOwner = this
 
-        mainToolbar = activity as MainActivity
-        viewModel.products.observe(viewLifecycleOwner, Observer { list ->
-
-            mainToolbar.image_badge.apply {
-                if (list.isNotEmpty()) makeVisible() else makeGone()
-            }
-
-            mainToolbar.text_badge.apply {
-                text = list.size.toString()
-            }
-        })
+        setupObservers()
 
         return binding.root
     }
@@ -96,9 +91,18 @@ class ProductListFragment : Fragment() {
         }
     }
 
-    private fun getDatabaseInstance() : ProductRepository {
-        val dao = ProductDatabase.getInstance(requireContext()).productDAO
-        return ProductRepository(dao)
+    private fun setupObservers() {
+        viewModel.cart.observe(viewLifecycleOwner, Observer { list ->
+
+            mainActivity.image_badge.apply {
+                if (list.isNotEmpty()) makeVisible() else makeGone()
+            }
+
+            mainActivity.text_badge.apply {
+                text = list.size.toString()
+            }
+
+        })
     }
 
     private fun insertToCart(it: String?) {
@@ -107,7 +111,7 @@ class ProductListFragment : Fragment() {
         }
     }
 
-    private fun displayAddedItemMessage(msg: String?, itemColor: String) {
+    private fun displayAddedItemMessage(msg: String?, hexColor: String) {
         val snackbarPadding = resources.getDimension(R.dimen.dimens_16dp).toInt()
 
         val snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
@@ -115,14 +119,13 @@ class ProductListFragment : Fragment() {
 
         val snackbarItemAddedBinding = SnackbarItemAddedBinding.inflate(layoutInflater)
         snackbarItemAddedBinding.apply {
-            val drawable = containerBackground.background
 
             textItemAdded.text = context?.messageFormat(msg)
             imageClose.setOnClickListener {
                 snackbar.dismiss()
             }
 
-            DrawableCompat.setTint(drawable, Color.parseColor(itemColor))
+            containerBackground.setBackgroundTint(hexColor)
         }
 
         val snackbarLayout = snackbar.view as Snackbar.SnackbarLayout

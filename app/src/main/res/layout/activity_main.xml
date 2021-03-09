@@ -7,6 +7,10 @@
     <data>
 
         <variable
+            name="viewmodel"
+            type="com.bbo.mobiledevexam.presentation.screens.main.MainActivityViewModel" />
+
+        <variable
             name="customFont"
             type="com.bbo.mobiledevexam.model.CustomFont" />
 
@@ -42,6 +46,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    setCustomFont="@{ customFont.MontserratExtraBold }"
                     style="@style/Toolbar_Title" />
 
                 <ImageView
@@ -53,6 +58,7 @@
                     app:layout_constraintStart_toStartOf="@id/text_title"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.99"
+                    android:onClick="@{ () -> viewmodel.onClickCart() }"
                     style="@style/Toolbar_Image_Cart" />
 
                 <ImageView

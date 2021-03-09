@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="product"
+            type="com.bbo.mobiledevexam.db.CartTable" />
+
+        <variable
+            name="listener"
+            type="com.bbo.mobiledevexam.adapter.cart.CartAdapter.Listener" />
+
+        <variable
+            name="customFont"
+            type="com.bbo.mobiledevexam.model.CustomFont" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/cart_item_background"
+        android:layout_marginTop="@dimen/dimens_16dp"
+        android:layout_marginStart="@dimen/dimens_25dp"
+        android:layout_marginEnd="@dimen/dimens_25dp"
+        android:paddingBottom="@dimen/dimens_5dp"
+        android:paddingStart="@dimen/dimens_2dp"
+        android:paddingEnd="@dimen/dimens_2dp"
+        android:paddingTop="@dimen/dimens_2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/dimens_16dp"
+            android:paddingStart="@dimen/dimens_16dp"
+            android:paddingEnd="@dimen/dimens_16dp"
+            android:background="@drawable/dialog_added_message_background"
+            app:setBackgroundTint="@{product.productColor}">
+
+            <LinearLayout
+                android:id="@+id/container_product_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintWidth_percent="0.7"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/product_name"
+                    style="@style/Recycler_Item.ProductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="2"
+                    android:maxLines="2"
+                    android:text="@{product.productName}"
+                    setCustomFont="@{customFont.MontserratBold}" />
+
+                <TextView
+                    android:id="@+id/product_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Recycler_Item.ProductPrice"
+                    setFormattedPriceText="@{product.productPrice}"
+                    setCustomFont="@{customFont.MontserratExtraBold}"
+                    android:layout_marginBottom="@dimen/dimens_16dp" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/image_close"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/snackbar_button"
+            android:layout_gravity="end"
+            android:onClick="@{() -> listener.onDelete(product)}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

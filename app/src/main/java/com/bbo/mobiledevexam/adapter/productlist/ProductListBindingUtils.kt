@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.BindingAdapter
 import com.bbo.mobiledevexam.model.CustomFont
 import kotlin.math.sign
@@ -42,5 +43,12 @@ fun ImageView.setImageResourceByName(filename: String?) {
     filename?.let {
         val resourceId = context.resources.getIdentifier(filename, "drawable", context.packageName)
         setImageResource(resourceId)
+    }
+}
+
+@BindingAdapter("app:setBackgroundTint")
+fun View.setBackgroundTint(hexColor: String?) {
+    hexColor?.let {
+        DrawableCompat.setTint(background, Color.parseColor(hexColor))
     }
 }
