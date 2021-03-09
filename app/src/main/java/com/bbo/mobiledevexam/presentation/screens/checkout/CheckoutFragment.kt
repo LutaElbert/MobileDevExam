@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.databinding.ActivityMainBinding
 import com.bbo.mobiledevexam.databinding.FragmentCheckoutBinding
@@ -44,4 +46,13 @@ class CheckoutFragment : Fragment(), CheckoutViewModel.Callback {
     }
 
     override fun isAgreedToTermAndConditions(): Boolean = binding.switchTac.isChecked
+
+    override fun onPay() {
+        activity?.let {
+            it.findNavController(R.id.nav_host_fragment).apply {
+                navigateUp()
+                navigate(R.id.orderFragment)
+            }
+        }
+    }
 }
