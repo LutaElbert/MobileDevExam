@@ -28,7 +28,9 @@ class OrderFragment : Fragment(), OrderViewModel.Callback {
 
         mainActivity = activity as MainActivity
 
-        factory = OrderViewModelFactory(mainActivity.repository)
+        factory = OrderViewModelFactory(mainActivity.application ,mainActivity.repository)
+
+
 
         viewModel = ViewModelProvider(this, factory).get(OrderViewModel::class.java)
         viewModel.callback = this
