@@ -7,15 +7,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bbo.mobiledevexam.databinding.ItemCartBinding
 import com.bbo.mobiledevexam.databinding.ItemCartFooterBinding
-import com.bbo.mobiledevexam.db.CartTable
+import com.bbo.mobiledevexam.db.ProductTable
 
-class CartAdapter : ListAdapter<CartTable, RecyclerView.ViewHolder>(ProductDiffCallback) {
+class CartAdapter : ListAdapter<ProductTable, RecyclerView.ViewHolder>(ProductDiffCallback) {
 
     var listener: Listener? = null
 
     private var total: Double? = 0.0
 
-    var cartList: MutableList<CartTable>? = null
+    var productList: MutableList<ProductTable>? = null
         set(value) {
             field = value
             submitList(value)
@@ -27,9 +27,9 @@ class CartAdapter : ListAdapter<CartTable, RecyclerView.ViewHolder>(ProductDiffC
 
     inner class ViewHolderList(private val binding: ItemCartBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun init(cart: CartTable, listener: Listener?) {
+        fun init(product: ProductTable, listener: Listener?) {
             binding.apply {
-                this.product = cart
+                this.product = product
                 this.listener = listener
                 executePendingBindings()
             }
@@ -48,8 +48,8 @@ class CartAdapter : ListAdapter<CartTable, RecyclerView.ViewHolder>(ProductDiffC
 
     }
 
-    override fun submitList(list: MutableList<CartTable>?) {
-        list?.add(CartTable(productId = ""))
+    override fun submitList(list: MutableList<ProductTable>?) {
+        list?.add(ProductTable(productId = ""))
         super.submitList(list)
     }
 
@@ -87,18 +87,18 @@ class CartAdapter : ListAdapter<CartTable, RecyclerView.ViewHolder>(ProductDiffC
     }
 
     interface Listener {
-        fun onDelete(product: CartTable)
+        fun onDelete(product: ProductTable)
         fun onBuy()
     }
 
     companion object {
 
-        object ProductDiffCallback: DiffUtil.ItemCallback<CartTable>() {
-            override fun areItemsTheSame(oldItem: CartTable, newItem: CartTable): Boolean {
+        object ProductDiffCallback: DiffUtil.ItemCallback<ProductTable>() {
+            override fun areItemsTheSame(oldItem: ProductTable, newItem: ProductTable): Boolean {
                 return oldItem.productId == newItem.productId
             }
 
-            override fun areContentsTheSame(oldItem: CartTable, newItem: CartTable): Boolean {
+            override fun areContentsTheSame(oldItem: ProductTable, newItem: ProductTable): Boolean {
                 return oldItem == newItem
             }
         }

@@ -2,7 +2,7 @@ package com.bbo.mobiledevexam.presentation.screens.cart
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bbo.mobiledevexam.db.CartTable
+import com.bbo.mobiledevexam.db.ProductTable
 import com.bbo.mobiledevexam.db.ProductRepository
 import kotlinx.coroutines.launch
 
@@ -15,7 +15,7 @@ class CartViewModel(val repository: ProductRepository) : ViewModel() {
         delete(item)
     }
 
-    private fun delete(cart: CartTable) = viewModelScope.launch {
-        repository.delete(cart)
+    private fun delete(product: ProductTable) = viewModelScope.launch {
+        repository.delete(product)
     }
 }

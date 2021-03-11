@@ -2,7 +2,7 @@ package com.bbo.mobiledevexam.network.response
 
 import android.content.Context
 import android.util.Log
-import com.bbo.mobiledevexam.db.CartTable
+import com.bbo.mobiledevexam.db.ProductTable
 import com.bbo.mobiledevexam.model.ProductList
 import com.bbo.mobiledevexam.util.constant.Constants
 import com.bbo.mobiledevexam.util.extension.getLocalJson
@@ -27,12 +27,12 @@ class JsonResponse(val context: Context) : JsonInterface {
 
     override fun getProductList() = gson.fromJson(response, ProductList::class.java)
 
-    fun saveOrder(cart: List<CartTable>?) {
-        cart?.let {
+    fun saveOrder(product: List<ProductTable>?) {
+        product?.let {
 
             try {
                 val writer = FileWriter("$path/order_orderId.json")
-                val json = gson.toJson(cart, writer)
+                val json = gson.toJson(product, writer)
                 Log.d("qwe", "qwe $json")
                 Log.d("qwe", "qwe1 $writer")
                 writer.close()
@@ -49,7 +49,7 @@ class JsonResponse(val context: Context) : JsonInterface {
         val path = context.cacheDir.absolutePath
         val br = BufferedReader(FileReader("$path/order_orderId.json"))
 
-        val temp = gsonBuilder.fromJson(br, Array<CartTable>::class.java)
+        val temp = gsonBuilder.fromJson(br, Array<ProductTable>::class.java)
 
         temp.forEach {
             Log.d(TAG, "sample display $it")

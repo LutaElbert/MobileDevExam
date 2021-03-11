@@ -7,17 +7,17 @@ import androidx.room.*
 interface ProductDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(cart: CartTable)
+    suspend fun insert(product: ProductTable)
 
     @Update
-    suspend fun update(cart: CartTable)
+    suspend fun update(product: ProductTable)
 
     @Delete
-    suspend fun delete(cart: CartTable)
+    suspend fun delete(product: ProductTable)
 
     @Query("DELETE FROM product_item_table")
     suspend fun deleteAll()
 
     @Query("SELECT * FROM product_item_table")
-    fun getAllProducts(): LiveData<List<CartTable>>
+    fun getAllProducts(): LiveData<List<ProductTable>>
 }

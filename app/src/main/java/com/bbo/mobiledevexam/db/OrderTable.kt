@@ -5,15 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "product_item_table")
-data class CartTable(
+data class OrderTable(
 
-//    @PrimaryKey(autoGenerate = true)
-//    @ColumnInfo(name = "id")
-//    val id: Int,
-
-    @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "product_id")
-    val productId: String,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "order_id")
+    val orderId: Int,
 
     @ColumnInfo(name = "product_name")
     val productName: String? = null,

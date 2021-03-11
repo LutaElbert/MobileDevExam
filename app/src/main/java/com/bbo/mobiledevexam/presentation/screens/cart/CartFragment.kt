@@ -11,7 +11,7 @@ import androidx.navigation.findNavController
 import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.adapter.cart.CartAdapter
 import com.bbo.mobiledevexam.databinding.FragmentCartBinding
-import com.bbo.mobiledevexam.db.CartTable
+import com.bbo.mobiledevexam.db.ProductTable
 import com.bbo.mobiledevexam.presentation.screens.main.MainActivity
 import com.bbo.mobiledevexam.util.extension.makeGone
 import com.bbo.mobiledevexam.util.extension.makeVisible
@@ -61,12 +61,12 @@ class CartFragment : Fragment(), CartAdapter.Listener {
                     text = it.size.toString()
                 }
 
-                adapter.cartList = it.toMutableList()
+                adapter.productList = it.toMutableList()
             }
         })
     }
 
-    override fun onDelete(product: CartTable) {
+    override fun onDelete(product: ProductTable) {
         viewModel.deleteItem(product.productId)
     }
 
