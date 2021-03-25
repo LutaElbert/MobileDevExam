@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bbo.mobiledevexam.MobileDevExamApplication
+import com.bbo.mobiledevexam.db.OrderDetailsTable
 import com.bbo.mobiledevexam.db.ProductTable
 import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.model.Category
@@ -108,10 +109,14 @@ class ProductViewModel(var application: Application, private val repository: Pro
         }
     }
 
+    private fun insertToCart(order: OrderDetailsTable) {
+
+    }
+
     private fun insert(productTable: ProductTable, onSuccess: (() -> Unit)? = null) {
         viewModelScope.launch {
             val job = launch {
-                repository.insert(productTable)
+                repository.insertProduct(productTable)
             }
 
             job.join()
@@ -119,7 +124,7 @@ class ProductViewModel(var application: Application, private val repository: Pro
         }
     }
 
-    fun getProductById(id: String?) : ProductItemList? = _productItemList.value?.find { it.id == id }
+    private fun getProductById(id: String?) : ProductItemList? = _productItemList.value?.find { it.id == id }
 
     fun deleteAll() = viewModelScope.launch {
         repository.deleteAll()
