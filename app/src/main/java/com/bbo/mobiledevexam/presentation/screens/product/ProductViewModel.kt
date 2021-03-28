@@ -8,16 +8,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bbo.mobiledevexam.MobileDevExamApplication
 import com.bbo.mobiledevexam.db.OrderDetailsTable
-import com.bbo.mobiledevexam.db.ProductTable
+import com.bbo.mobiledevexam.db.OrderTable
 import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.model.Category
 import com.bbo.mobiledevexam.model.ProductItemList
 import com.bbo.mobiledevexam.model.ProductList
+import io.reactivex.SingleObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 
 class ProductViewModel(var application: Application, private val repository: ProductRepository) : ViewModel(), Observable {
 
-    val cart = repository.products
+    val cart = repository.getAllCart()
+
+    var callback: Callback? = null
+
+    private val compositeDisposable = CompositeDisposable()
 
     private var _productListResponse = MutableLiveData<ProductList>()
     val productResponse: LiveData<ProductList>?
@@ -92,36 +101,68 @@ class ProductViewModel(var application: Application, private val repository: Pro
         } ?: list
     }
 
-    fun insert(id: String?, onSuccess: ((product: ProductItemList) -> Unit)? = null) {
-        val product = getProductById(id)
-        product?.let {
-            insert(
-                ProductTable(
-                    productId = requireNotNull(it.id),
-                    productName = it.name,
-                    productCategory = it.category,
-                    productColor = it.color,
-                    productPrice = it.price
-                ))
-            {
-                onSuccess?.invoke(it)
-            }
+    fun insert(id: String, onSuccess: ((product: ProductItemList) -> Unit)? = null) {
+        val product = getProductById(id) ?: return
+        getOrderTableRowCount {rowCount ->
+            if (rowCount < 1)
+                insertToCart(OrderDetailsTable(orderId = OrderTable.START_ID,productId = id)) {
+                    onSuccess?.invoke(product)
+                }
+            else
+                getMaxOrderTableId{maxId ->
+                    insertToCart(OrderDetailsTable(orderId = maxId, productId = id)) {
+                        onSuccess?.invoke(product)
+                    }
+                }
         }
     }
 
-    private fun insertToCart(order: OrderDetailsTable) {
+    private fun insertToCart(order: OrderDetailsTable, onSuccess: () -> Unit) {
+        val disposable = repository.insertCart(order)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{ onSuccess.invoke() }
 
+        compositeDisposable.add(disposable)
     }
 
-    private fun insert(productTable: ProductTable, onSuccess: (() -> Unit)? = null) {
-        viewModelScope.launch {
-            val job = launch {
-                repository.insertProduct(productTable)
-            }
+    private fun getOrderTableRowCount(onSuccess : (id : Long) -> (Unit)) {
+        repository.getOrderTableRowCount()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<Long> {
+                override fun onSuccess(t: Long) {
+                    onSuccess.invoke(t)
+                }
 
-            job.join()
-            onSuccess?.invoke()
-        }
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onError(e: Throwable) {
+                    callback?.onError(e.message)
+                }
+
+            })
+    }
+
+    private fun getMaxOrderTableId(onSuccess: (id: Long) -> Unit) {
+        repository.getMaxOrderTableId()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<Long>{
+                override fun onSuccess(t: Long) {
+                    onSuccess.invoke(t)
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onError(e: Throwable) {
+                    callback?.onError(e.message)
+                }
+            })
     }
 
     private fun getProductById(id: String?) : ProductItemList? = _productItemList.value?.find { it.id == id }
@@ -140,6 +181,10 @@ class ProductViewModel(var application: Application, private val repository: Pro
 
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
 
+    }
+
+    interface Callback {
+        fun onError(message: String?)
     }
 
 }

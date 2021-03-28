@@ -26,7 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
 
-class ProductListFragment : Fragment() {
+class ProductListFragment : Fragment(), ProductViewModel.Callback {
 
     private lateinit var binding: FragmentProductListBinding
 
@@ -47,6 +47,7 @@ class ProductListFragment : Fragment() {
         viewModelFactory = ProductViewModelFactory(requireNotNull(activity).application, mainActivity.repository)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+        viewModel.callback = this
 
         binding.productScreenViewModel = viewModel
         binding.lifecycleOwner = this
@@ -106,7 +107,7 @@ class ProductListFragment : Fragment() {
     }
 
     private fun insertToCart(it: String?) {
-        viewModel.insert(it) {
+        viewModel.insert(requireNotNull(it)) {
             displayAddedItemMessage(it.name, it.color ?: "")
         }
     }
@@ -135,6 +136,12 @@ class ProductListFragment : Fragment() {
         }
 
         snackbar.show()
+    }
+
+    override fun onError(message: String?) {
+        message?.let{
+            mainActivity.onError(it)
+        }
     }
 
 }

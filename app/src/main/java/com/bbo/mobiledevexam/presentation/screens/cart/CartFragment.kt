@@ -17,7 +17,7 @@ import com.bbo.mobiledevexam.util.extension.makeGone
 import com.bbo.mobiledevexam.util.extension.makeVisible
 import kotlinx.android.synthetic.main.activity_main.*
 
-class CartFragment : Fragment(), CartAdapter.Listener {
+class CartFragment : Fragment(), CartAdapter.Listener, CartViewModel.Callback {
 
     private lateinit var binding: FragmentCartBinding
 
@@ -36,6 +36,7 @@ class CartFragment : Fragment(), CartAdapter.Listener {
 
         viewModel = ViewModelProvider(this, CartViewModelFactory(mainActivity.repository))
             .get(CartViewModel::class.java)
+        viewModel.callback = this
 
         binding = FragmentCartBinding.inflate(layoutInflater, container, false)
 
@@ -66,11 +67,20 @@ class CartFragment : Fragment(), CartAdapter.Listener {
         })
     }
 
+    override fun onError(message: String?) {
+        val msg = message ?: return
+        mainActivity.onError(msg)
+    }
+
     override fun onDelete(product: ProductTable) {
         viewModel.deleteItem(product.productId)
     }
 
     override fun onBuy() {
+        viewModel.insertOrder()
+    }
+
+    override fun onOrderInserted() {
         activity?.let {
             it.findNavController(R.id.nav_host_fragment).apply {
                 navigateUp()
@@ -78,5 +88,4 @@ class CartFragment : Fragment(), CartAdapter.Listener {
             }
         }
     }
-
 }

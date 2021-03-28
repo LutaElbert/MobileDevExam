@@ -2,6 +2,7 @@ package com.bbo.mobiledevexam.presentation.screens.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -43,6 +44,10 @@ class MainActivity : AppCompatActivity(), MainActivityViewModel.Callback {
             navigateUp()
             navigate(R.id.cartFragment)
         }
+    }
+
+    fun onError(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
