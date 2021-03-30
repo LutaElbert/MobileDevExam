@@ -36,13 +36,19 @@ class MainActivity : AppCompatActivity(), MainActivityViewModel.Callback {
         viewModel.callback = this
 
         binding.viewmodel = viewModel
-
     }
 
     override fun onClickCart() {
         findNavController(R.id.nav_host_fragment).apply {
             navigateUp()
             navigate(R.id.cartFragment)
+        }
+    }
+
+    override fun onClickHome() {
+        findNavController(R.id.nav_host_fragment).apply {
+            navigateUp()
+            navigate(R.id.productListFragment)
         }
     }
 

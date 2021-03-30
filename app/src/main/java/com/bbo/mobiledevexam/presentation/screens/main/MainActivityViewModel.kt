@@ -1,6 +1,5 @@
 package com.bbo.mobiledevexam.presentation.screens.main
 
-import android.view.View
 import androidx.databinding.Observable
 import androidx.lifecycle.ViewModel
 import com.bbo.mobiledevexam.db.ProductRepository
@@ -13,6 +12,10 @@ class MainActivityViewModel(private val repository: ProductRepository): ViewMode
 
     fun onClickCart() {
         callback?.onClickCart()
+    }
+
+    fun onClickHome() {
+        callback?.onClickHome()
     }
 
     fun onDestroy() {
@@ -29,6 +32,7 @@ class MainActivityViewModel(private val repository: ProductRepository): ViewMode
 
     interface Callback {
         fun onClickCart()
+        fun onClickHome()
     }
 
 }
