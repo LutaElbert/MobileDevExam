@@ -16,6 +16,6 @@ class CartViewModel(val repository: ProductRepository) : ViewModel() {
     }
 
     private fun delete(cart: CartTable) = viewModelScope.launch {
-        repository.delete(cart)
+        repository.deleteCart(cart)
     }
 }

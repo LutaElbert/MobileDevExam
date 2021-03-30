@@ -111,7 +111,7 @@ class ProductViewModel(var application: Application, private val repository: Pro
     private fun insert(cartTable: CartTable, onSuccess: (() -> Unit)? = null) {
         viewModelScope.launch {
             val job = launch {
-                repository.insert(cartTable)
+                repository.insertCart(cartTable)
             }
 
             job.join()

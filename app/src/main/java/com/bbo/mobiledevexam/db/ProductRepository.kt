@@ -4,19 +4,20 @@ class ProductRepository(private val dao: ProductDAO) {
 
     val products = dao.getAllProducts()
 
-    suspend fun insert(cart: CartTable) {
-        dao.insert(cart)
+    val users = dao.getUsers()
+
+    suspend fun insertCart(cart: CartTable) {
+        dao.insertCart(cart)
     }
 
-    suspend fun update(cart: CartTable) {
-        dao.update(cart)
-    }
-
-    suspend fun delete(cart: CartTable) {
-        dao.delete(cart)
+    suspend fun deleteCart(cart: CartTable) {
+        dao.deleteCart(cart)
     }
 
     suspend fun deleteAll() {
         dao.deleteAll()
     }
+
+    fun insertUser(userTable: UserTable)  = dao.insertUser(userTable)
+
 }
