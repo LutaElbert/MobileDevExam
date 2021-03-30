@@ -119,11 +119,7 @@ class ProductViewModel(var application: Application, private val repository: Pro
         }
     }
 
-    fun getProductById(id: String?) : ProductItemList? = _productItemList.value?.find { it.id == id }
-
-    fun deleteAll() = viewModelScope.launch {
-        repository.deleteAll()
-    }
+    private fun getProductById(id: String?) : ProductItemList? = _productItemList.value?.find { it.id == id }
 
     override fun onCleared() {
         super.onCleared()

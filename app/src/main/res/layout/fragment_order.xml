@@ -95,9 +95,10 @@
                         android:layout_height="@dimen/dimens_16dp"/>
 
                     <TextView
+                        android:id="@+id/text_order_id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Your Order ID is #102022"
+                        android:text="@string/your_order_id_is"
                         android:textSize="@dimen/dimens_17sp"/>
 
                 </LinearLayout>

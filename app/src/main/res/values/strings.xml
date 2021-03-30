@@ -18,4 +18,5 @@
     <string name="hint_email">e.g jane@company.co</string>
     <string name="text_return_to_product">Return to Products</string>
     <string name="text_order_complete_message">Your order has been processed</string>
+    <string name="your_order_id_is">Your Order ID is #</string>
 </resources>

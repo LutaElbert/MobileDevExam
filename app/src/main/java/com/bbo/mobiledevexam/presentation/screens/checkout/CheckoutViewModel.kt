@@ -1,10 +1,10 @@
 package com.bbo.mobiledevexam.presentation.screens.checkout
 
-import android.util.Log
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.bbo.mobiledevexam.db.OrderTable
 import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.db.UserTable
 import io.reactivex.SingleObserver
@@ -66,14 +66,87 @@ class CheckoutViewModel(val repository: ProductRepository) : ViewModel(), Observ
                 }
 
                 override fun onError(e: Throwable) {
-
+                    callback?.onError(e.message)
                 }
             })
     }
 
     private fun navigateToOrderConfirmation() {
-        callback?.onPay()
+        getOrderRowCount{rowCount ->
+            if (rowCount < 1)
+                insertOrder(getOrders(OrderTable.START_ID))
+            else {
+                getOrderMaxId {maxId ->
+                    insertOrder(getOrders(maxId.inc()))
+                }
+            }
+        }
     }
+
+    private fun getOrders(id: Long): List<OrderTable> {
+        val cart = cart.value
+        val list = mutableListOf<OrderTable>()
+
+        cart?.forEach {
+            list.add(OrderTable(orderId = id, userEmail = editTextEmail.value.toString(), products = it))
+        }
+
+        return list
+    }
+
+    private fun insertOrder(orders: List<OrderTable>) {
+        repository.insertAllOrder(orders)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<List<Long>> {
+                override fun onSuccess(t: List<Long>) {
+                    callback?.onPay()
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onError(e: Throwable) {
+                    callback?.onError(e.message)
+                }
+            })
+    }
+
+    private fun getOrderMaxId(onSuccess: (Long) -> Unit) = repository.getMaxOrderTableId()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(object : SingleObserver<Long>{
+            override fun onSuccess(t: Long) {
+                onSuccess.invoke(t)
+            }
+
+            override fun onSubscribe(d: Disposable) {
+                compositeDisposable.add(d)
+            }
+
+            override fun onError(e: Throwable) {
+                callback?.onError(e.message)
+            }
+        })
+
+    private fun getOrderRowCount(onSuccess: (Long) -> Unit) = repository.getOrderTableRowCount()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(object : SingleObserver<Long>{
+            override fun onSuccess(t: Long) {
+                onSuccess.invoke(t)
+            }
+
+            override fun onSubscribe(d: Disposable) {
+                compositeDisposable.add(d)
+            }
+
+            override fun onError(e: Throwable) {
+                callback?.onError(e.message)
+            }
+        })
+
 
     private fun invalidInputs() : Boolean = !validInputs()
 
@@ -100,6 +173,7 @@ class CheckoutViewModel(val repository: ProductRepository) : ViewModel(), Observ
 
     interface Callback {
         fun isAgreedToTermAndConditions() : Boolean
+        fun onError(message: String?)
         fun onPay()
     }
 

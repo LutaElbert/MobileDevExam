@@ -1,17 +1,14 @@
 package com.bbo.mobiledevexam.presentation.screens.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.bbo.mobiledevexam.R
 import com.bbo.mobiledevexam.databinding.ActivityMainBinding
-import com.bbo.mobiledevexam.db.ProductDAO
 import com.bbo.mobiledevexam.db.ProductDatabase
 import com.bbo.mobiledevexam.db.ProductRepository
-import com.bbo.mobiledevexam.model.CustomFont
-import com.bbo.mobiledevexam.util.extension.getCustomFont
 
 class MainActivity : AppCompatActivity(), MainActivityViewModel.Callback {
 
@@ -20,6 +17,10 @@ class MainActivity : AppCompatActivity(), MainActivityViewModel.Callback {
     private lateinit var viewModel: MainActivityViewModel
 
     lateinit var repository: ProductRepository
+
+    companion object {
+        const val TAG = "MainActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,11 @@ class MainActivity : AppCompatActivity(), MainActivityViewModel.Callback {
             navigateUp()
             navigate(R.id.cartFragment)
         }
+    }
+
+    fun onError(message: String?) {
+        val msg = message ?: return
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {

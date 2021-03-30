@@ -30,16 +30,22 @@ class OrderFragment : Fragment(), OrderViewModel.Callback {
 
         factory = OrderViewModelFactory(mainActivity.application ,mainActivity.repository)
 
-
-
         viewModel = ViewModelProvider(this, factory).get(OrderViewModel::class.java)
         viewModel.callback = this
 
         binding = FragmentOrderBinding.inflate(layoutInflater, container, false)
         binding.viewmodel = viewModel
 
+        viewModel.getOrderNumber {
+            binding.textOrderId.apply {
+                text = text.toString().plus(it)
+            }
+        }
+
         return binding.root
     }
+
+    override fun onError(message: String?) = mainActivity.onError(message)
 
     override fun onClickReturnToProducts() {
         activity?.let {
