@@ -1,22 +1,42 @@
 package com.bbo.mobiledevexam.db
 
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+
 class ProductRepository(private val dao: ProductDAO) {
 
     val products = dao.getAllProducts()
 
-    suspend fun insert(cart: CartTable) {
-        dao.insert(cart)
+    val users = dao.getUsers()
+
+    val orders = dao.getOrders()
+
+    suspend fun insertCart(cart: CartTable) {
+        dao.insertCart(cart)
     }
 
-    suspend fun update(cart: CartTable) {
-        dao.update(cart)
+    suspend fun deleteCart(cart: CartTable) {
+        dao.deleteCart(cart)
     }
 
-    suspend fun delete(cart: CartTable) {
-        dao.delete(cart)
+    fun deleteAllFromCart() {
+        Single.fromCallable {
+            dao.deleteAll()
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
     }
 
-    suspend fun deleteAll() {
-        dao.deleteAll()
-    }
+    fun insertUser(userTable: UserTable)  = dao.insertUser(userTable)
+
+    fun insertOrder(orderTable: OrderTable)  = dao.insertOrder(orderTable)
+
+    fun insertAllOrder(orders: List<OrderTable>)  = dao.insertAllOrder(*orders.toTypedArray())
+
+    fun getOrderTableRowCount() = dao.getOrderTableRowCount()
+
+    fun getMaxOrderTableId() = dao.getMaxOrderTableId()
+
 }

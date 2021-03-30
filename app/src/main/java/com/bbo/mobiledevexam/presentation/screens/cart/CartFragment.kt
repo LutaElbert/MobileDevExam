@@ -71,6 +71,8 @@ class CartFragment : Fragment(), CartAdapter.Listener {
     }
 
     override fun onBuy() {
+        if (viewModel.isEmptyCart()) return
+
         activity?.let {
             it.findNavController(R.id.nav_host_fragment).apply {
                 navigateUp()

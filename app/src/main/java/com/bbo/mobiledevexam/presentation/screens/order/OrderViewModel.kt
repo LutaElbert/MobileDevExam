@@ -1,25 +1,48 @@
 package com.bbo.mobiledevexam.presentation.screens.order
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.bbo.mobiledevexam.MobileDevExamApplication
 import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.network.response.JsonResponse
-import com.google.gson.Gson
-import java.io.FileWriter
-import java.io.IOException
+import io.reactivex.SingleObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class OrderViewModel(val application: Application, val repository: ProductRepository) : ViewModel() {
 
     var callback : Callback? = null
-    var gson = Gson()
+
+    private val compositeDisposable = CompositeDisposable()
 
     private var gsonHelper: JsonResponse = (application as MobileDevExamApplication).productResponse
 
     override fun onCleared() {
         super.onCleared()
         callback = null
+        compositeDisposable.clear()
+    }
+
+    fun getOrderNumber(onSuccess: (orderId: Long) -> Unit) {
+        repository.getMaxOrderTableId()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<Long>{
+                override fun onSuccess(t: Long) {
+                    onSuccess.invoke(t)
+                    repository.deleteAllFromCart()
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onError(e: Throwable) {
+
+                }
+            })
     }
 
     fun onClickReturnToProducts() {
@@ -34,6 +57,7 @@ class OrderViewModel(val application: Application, val repository: ProductReposi
 
     interface Callback {
         fun onClickReturnToProducts()
+        fun onError(message: String?)
     }
 
 }
