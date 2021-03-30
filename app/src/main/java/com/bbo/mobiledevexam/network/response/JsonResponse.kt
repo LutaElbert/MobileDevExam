@@ -3,6 +3,8 @@ package com.bbo.mobiledevexam.network.response
 import android.content.Context
 import android.util.Log
 import com.bbo.mobiledevexam.db.CartTable
+import com.bbo.mobiledevexam.db.OrderTable
+import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.model.ProductList
 import com.bbo.mobiledevexam.util.constant.Constants
 import com.bbo.mobiledevexam.util.extension.getLocalJson
@@ -13,7 +15,7 @@ import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
 
-class JsonResponse(val context: Context) : JsonInterface {
+class JsonResponse(val context: Context, val repository: ProductRepository?) : JsonInterface {
 
     private var gson = Gson()
 
@@ -25,34 +27,32 @@ class JsonResponse(val context: Context) : JsonInterface {
         const val TAG = "JsonResponse"
     }
 
-    override fun getProductList() = gson.fromJson(response, ProductList::class.java)
+    override fun getProductList(): ProductList = gson.fromJson(response, ProductList::class.java)
 
-    fun saveOrder(cart: List<CartTable>?) {
-        cart?.let {
+    fun saveOrder(orderId: Long, orders: List<OrderTable>?) {
+        orders?.let {
 
             try {
-                val writer = FileWriter("$path/order_orderId.json")
-                val json = gson.toJson(cart, writer)
-                Log.d("qwe", "qwe $json")
-                Log.d("qwe", "qwe1 $writer")
+                val writer = FileWriter("$path/order_$orderId.json")
+                gson.toJson(it, writer)
                 writer.close()
 
-                readJSONFromFile()
+                readJSONFromFile(orderId)
             } catch (e: IOException) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun readJSONFromFile() {
+    private fun readJSONFromFile(orderId: Long) {
         val gsonBuilder = GsonBuilder().create()
         val path = context.cacheDir.absolutePath
-        val br = BufferedReader(FileReader("$path/order_orderId.json"))
+        val br = BufferedReader(FileReader("$path/order_$orderId.json"))
 
-        val temp = gsonBuilder.fromJson(br, Array<CartTable>::class.java)
+        val temp = gsonBuilder.fromJson(br, Array<OrderTable>::class.java)
 
         temp.forEach {
-            Log.d(TAG, "sample display $it")
+            Log.d(TAG, "display order$it")
         }
     }
 }

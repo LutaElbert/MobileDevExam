@@ -1,8 +1,10 @@
 package com.bbo.mobiledevexam.presentation.screens.order
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.bbo.mobiledevexam.MobileDevExamApplication
+import com.bbo.mobiledevexam.db.OrderTable
 import com.bbo.mobiledevexam.db.ProductRepository
 import com.bbo.mobiledevexam.network.response.JsonResponse
 import io.reactivex.SingleObserver
@@ -17,7 +19,19 @@ class OrderViewModel(val application: Application, val repository: ProductReposi
 
     private val compositeDisposable = CompositeDisposable()
 
-    private var gsonHelper: JsonResponse = (application as MobileDevExamApplication).productResponse
+    private var gsonHelper: JsonResponse? = null
+
+    private var mobileDevExamApplication: MobileDevExamApplication? = null
+        set(value) {
+            value?.repository = repository
+            field = value
+
+            gsonHelper = value?.productResponse
+        }
+
+    init {
+        mobileDevExamApplication = (application as MobileDevExamApplication)
+    }
 
     override fun onCleared() {
         super.onCleared()
@@ -31,8 +45,9 @@ class OrderViewModel(val application: Application, val repository: ProductReposi
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(object : SingleObserver<Long>{
                 override fun onSuccess(t: Long) {
-                    onSuccess.invoke(t)
+                    saveOrder(t)
                     repository.deleteAllFromCart()
+                    onSuccess.invoke(t)
                 }
 
                 override fun onSubscribe(d: Disposable) {
@@ -40,19 +55,32 @@ class OrderViewModel(val application: Application, val repository: ProductReposi
                 }
 
                 override fun onError(e: Throwable) {
-
+                    callback?.onError(e.message)
                 }
             })
     }
 
     fun onClickReturnToProducts() {
-        saveOrder()
-
         callback?.onClickReturnToProducts()
     }
 
-    private fun saveOrder() {
-        gsonHelper.saveOrder(repository.products.value)
+    private fun saveOrder(orderId: Long) {
+        repository.findOrders(orderId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<List<OrderTable>>{
+                override fun onSuccess(t: List<OrderTable>) {
+                    gsonHelper?.saveOrder(orderId, t)
+                }
+
+                override fun onSubscribe(d: Disposable) {
+                    compositeDisposable.add(d)
+                }
+
+                override fun onError(e: Throwable) {
+                    callback?.onError(e.message)
+                }
+            })
     }
 
     interface Callback {
