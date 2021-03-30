@@ -6,7 +6,9 @@ import java.time.LocalDate
 @Entity(tableName = "order_table")
 data class OrderTable(
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    var id: Long? = null,
+
     @ColumnInfo(name = "order_id")
     var orderId: Long? = null,
 

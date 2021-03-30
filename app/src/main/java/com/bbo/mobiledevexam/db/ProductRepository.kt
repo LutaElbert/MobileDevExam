@@ -33,10 +33,12 @@ class ProductRepository(private val dao: ProductDAO) {
 
     fun insertOrder(orderTable: OrderTable)  = dao.insertOrder(orderTable)
 
-    fun insertAllOrder(orders: List<OrderTable>)  = dao.insertAllOrder(*orders.toTypedArray())
+    fun insertAllOrder(orders: List<OrderTable>)  = dao.insertAllOrder(orders)
 
     fun getOrderTableRowCount() = dao.getOrderTableRowCount()
 
     fun getMaxOrderTableId() = dao.getMaxOrderTableId()
+
+    fun findOrders(orderId: Long) = dao.findOrders(orderId)
 
 }

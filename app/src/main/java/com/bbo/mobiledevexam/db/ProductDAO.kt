@@ -17,7 +17,7 @@ interface ProductDAO {
     fun insertOrder(orderTable: OrderTable): Single<Long>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAllOrder(vararg orders: OrderTable): Single<List<Long>>
+    fun insertAllOrder(orders: List<OrderTable>): Single<List<Long>>
 
     @Query("SELECT count() FROM order_table AS count")
     fun getOrderTableRowCount(): Single<Long>
@@ -30,6 +30,9 @@ interface ProductDAO {
 
     @Query("DELETE FROM product_item_table")
     fun deleteAll()
+
+    @Query("SELECT * FROM order_table WHERE order_id = :orderId")
+    fun findOrders(orderId: Long) : Single<List<OrderTable>>
 
     @Query("SELECT * FROM user_table")
     fun getUsers(): Single<List<UserTable>>
